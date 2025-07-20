@@ -401,7 +401,7 @@ F.Nigeria$weather_severity <- ifelse(F.Nigeria$temp > 313.15, 'Severe',
     ifelse(F.Nigeria$wind_speed > 10, 'Severe',
   ifelse(F.Nigeria$cloud > 80 & grepl('storm|thunderstorm|heavy rain', tolower(F.Nigeria$description)), 'Severe', 'Non-Severe')))))
 
-### Another thing to do is to split the weather condition by severe... would do that later.
+
 data_sf_sv <- st_as_sf(F.Nigeria, coords = c("longitude", "latitude"), crs = 4326)
 mapview(data_sf_sv, zcol = "weather_severity", legend = TRUE)
 
@@ -806,10 +806,6 @@ ggplot(data = nn_cm3_df, aes(x = Reference, y = Prediction)) +
         plot.title = element_text(hjust = 0.5, face = "bold"))
 
 
-#AUC
-# Load libraries
-library(pROC)
-
 
 ALL_pred_prob <- predict(nn_model, newdata = balanced_data_N, type = "class")%>%as.factor()
 nn_cm3 <-confusionMatrix(ALL_pred_prob, as.factor(balanced_data_N$weather_severity))
@@ -837,13 +833,4 @@ pdPRA3$weather_severity <- ifelse(pdPRA3$weather_severity == 1,"Severe", "Non-Se
 logistic_Reg3 <- st_as_sf(pdPRA3, coords = c("longitude", "latitude"), crs = 4326)
 mapview(logistic_Reg3, zcol = "weather_severity", legend = TRUE)
 
-# Example data (replace with yours)
 
-
-# Generate ROC object
-roc_obj <- roc(balanced_data_N$weather_severity, ALL_pred_prob)
-
-# Plot ROC curve
-plot(roc_obj, col = "blue", lwd = 2, main = "ROC Curve")
-auc_value <- auc(roc_obj)
-legend("bottomright", legend = paste("AUC =", round(auc_value, 4)), col = "blue", lwd = 2)
